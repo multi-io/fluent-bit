@@ -695,12 +695,20 @@ struct flb_connection *flb_upstream_conn_get(struct flb_upstream *u)
               "net.connect_timeout        = %i seconds\n"
               "net.source_address         = %s\n"
               "net.keepalive              = %s\n"
+              "net.tcp_keepalive          = %s\n"
+              "net.tcp_keepalive_time     = %i seconds\n"
+              "net.tcp_keepalive_interval = %i seconds\n"
+              "net.tcp_keepalive_probes   = %i\n"
               "net.keepalive_idle_timeout = %i seconds\n"
               "net.max_worker_connections = %i",
               u->tcp_host, u->tcp_port,
               u->base.net.connect_timeout,
               u->base.net.source_address ? u->base.net.source_address: "any",
               u->base.net.keepalive ? "enabled": "disabled",
+              u->base.net.tcp_keepalive ? "enabled": "disabled",
+              u->base.net.tcp_keepalive_time,
+              u->base.net.tcp_keepalive_interval,
+              u->base.net.tcp_keepalive_probes,
               u->base.net.keepalive_idle_timeout,
               u->base.net.max_worker_connections);
 
