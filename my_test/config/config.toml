@@ -1,0 +1,62 @@
+[SERVICE]
+    Daemon Off
+    Flush 1
+    Log_Level trace
+    Parsers_File /fluent-bit/etc/parsers.conf
+    Parsers_File /fluent-bit/etc/conf/custom_parsers.conf
+    HTTP_Server On
+    HTTP_Listen 0.0.0.0
+    HTTP_Port 2020
+    Health_Check On
+    net.keepalive on
+    net.tcp_keepalive on
+    net.tcp_keepalive_time 10
+    net.tcp_keepalive_interval 10
+    net.tcp_keepalive_probes 5
+
+[INPUT]
+    name kubernetes_events
+    tag k8s_events
+    kube_url https://5qs52w7mbb.dbl1.dev.metakube.de:32102
+    kube_ca_file /config/ca.crt
+    kube_token_file /config/token
+    interval_sec 120
+    net.keepalive on
+    net.tcp_keepalive on
+    net.tcp_keepalive_time 10
+    net.tcp_keepalive_interval 10
+    net.tcp_keepalive_probes 5
+
+#
+# Filters for Host Kubernetes Event Logging
+#
+[FILTER]
+    # use the message field as log message if it exists
+    Name modify
+    Match k8s_events
+    Hard_Rename message log
+    Condition Key_exists message
+[FILTER]
+    # lift involvedObject map to top level involvedObject_* fields
+    Name nest
+    Match k8s_events
+    Operation lift
+    Nested_under involvedObject
+    Add_prefix involvedObject_
+[FILTER]
+    # use the involvedObject.name field as source if it exists
+    Name modify
+    Match k8s_events
+    Hard_Rename involvedObject_name source
+    Condition Key_exists involvedObject_name
+[FILTER]
+    # add an "input" field with value "kube" and remove some fields
+    Name record_modifier
+    Match k8s_events
+    Record input kube_events
+
+[OUTPUT]
+    Name file
+    Match k8s_events
+    #File /dev/stdout
+    File /config/output
