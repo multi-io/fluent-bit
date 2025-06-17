@@ -8,11 +8,6 @@
     HTTP_Listen 0.0.0.0
     HTTP_Port 2020
     Health_Check On
-    net.keepalive on
-    net.tcp_keepalive on
-    net.tcp_keepalive_time 10
-    net.tcp_keepalive_interval 10
-    net.tcp_keepalive_probes 5
 
 [INPUT]
     name kubernetes_events
@@ -23,9 +18,9 @@
     interval_sec 120
     net.keepalive on
     net.tcp_keepalive on
-    net.tcp_keepalive_time 10
-    net.tcp_keepalive_interval 10
-    net.tcp_keepalive_probes 5
+    net.tcp_keepalive_time 25
+    net.tcp_keepalive_interval 25
+    net.tcp_keepalive_probes 2
 
 #
 # Filters for Host Kubernetes Event Logging
